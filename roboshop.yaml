@@ -4,7 +4,7 @@
   vars:
     sg_id: sg-0f7d43bf455bbe35f
     ami_id: ami-0220d79f3f480ecf5
-    zone: anreddy.com
+    domain_name: anreddy.com
     env: dev
     instances:
     - mongodb
@@ -31,8 +31,8 @@
   - name: create r53 records
     amazon.aws.route53:
       state: present
-      name: "{{ zone }}"
-      record: "{{ item.item }}-{{ env }}.{{ zone }}"
+      name: "{{ domain_name }}"
+      record: "{{ item.item }}-{{ env }}.{{ domain_name }}"
       type: A 
       ttl: 1
       value: "{{ item.instances[0].private_ip_address }}"
