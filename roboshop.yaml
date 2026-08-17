@@ -4,7 +4,7 @@
   vars:
     sg_id: sg-0f7d43bf455bbe35f
     ami_id: ami-0220d79f3f480ecf5
-    domain_name: anreddy.com
+    zone: anreddy.com
     env: dev
     instances:
     - mongodb
