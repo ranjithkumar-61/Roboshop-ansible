@@ -31,7 +31,7 @@
   - name: create r53 records
     amazon.aws.route53:
       state: present
-      name: "{{ domain_name }}"
+      zone: "{{ domain_name }}"
       record: "{{ item.item }}-{{ env }}.{{ domain_name }}"  # mongodb-dev.anreddy.com, frontend-dev.anreddy.com
       type: A 
       ttl: 1
@@ -42,7 +42,7 @@
   - name: create r53 records
     amazon.aws.route53:
       state: present
-      name: "{{ domain_name }}"
+      zone: "{{ domain_name }}"
       record: "roboshop-{{ env }}.{{ domain_name }}"  # roboshop-dev.anreddy.com
       type: A 
       ttl: 1
