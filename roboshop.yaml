@@ -23,10 +23,12 @@
         Name: "{{ item }}-{{ env }}"
     loop: "{{ instances }}"
     register: ec2_output
+    when: action == "create"
 
   - name: print the ec2_output
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
+    when: action == "create"
     
   - name: create r53 records
     amazon.aws.route53:
@@ -39,6 +41,7 @@
       wait: true
       overwrite: true
     loop: "{{ ec2_output.results }}"
+    when: action == "create"
 
   - name: create r53 records
     amazon.aws.route53:
@@ -51,7 +54,23 @@
       wait: true
       overwrite: true
     loop: "{{ ec2_output.results }}"
-    when: item.item == "frontend"
+    when: # and
+    - item.item == "frontend"
+    - action == "create"
+
+  ### DESTROY ###
+  - name: delete r53 records for frontend
+    amazon.aws.route53:
+      state: absent
+      zone: "{{ domain_name }}"
+      record: "roboshop-{{ env }}.{{ domain_name }}" # roboshop-dev.daws88s.online
+      type: A
+      ttl: 1
+    loop: "{{ instances }}"
+    when:  # and
+    - item == "frontend"
+    - action == "destroy"
+
     
   
 
