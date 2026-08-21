@@ -1,3 +1,4 @@
+# ansible-playbook -i localhost, -e '{"instances":["mongodb","catalogue","redis","user","cart","mysql","shipping","rabbitmq","payment","frontend"]}'  -e action=destroy roboshop.yaml
 - name: create ec2 and r53 records
   hosts: all
   connection: local
@@ -63,7 +64,7 @@
     amazon.aws.route53:
       state: absent
       zone: "{{ domain_name }}"
-      record: "roboshop-{{ env }}.{{ domain_name }}" # roboshop-dev.daws88s.online
+      record: "roboshop-{{ env }}.{{ domain_name }}" # roboshop-dev.anreddy.com
       type: A
       ttl: 1
     loop: "{{ instances }}"
@@ -71,7 +72,23 @@
     - item == "frontend"
     - action == "destroy"
 
-    
+  - name: delete r53 records
+    amazon.aws.route53:
+      state: absent
+      zone: "{{ domain_name }}"
+      record: "{{ item }}-{{ env }}.{{ domain_name }}" # roboshop-dev.anreddy.com
+      type: A
+      ttl: 1
+    loop: "{{ instances }}"
+    when: action == "destroy"
+
+  - name: delete ec2 instance
+    amazon.aws.ec2_instance:
+      state: absent
+      name: "{{ item }}-{{ env }}"
+      wait: false
+    loop: "{{ instances }}"
+    when: action == "destroy"
   
 
 
